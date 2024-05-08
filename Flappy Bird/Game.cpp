@@ -1435,6 +1435,7 @@ struct Gamemodes
         if (dashDo == 0 && !dashColl)
         {
             Collide.CollisionWGround();
+            Collide.CollisionMedium();
             Collide.CollisionWPipes(Pipes.PiUp);
             Collide.CollisionWPipes(Pipes.PiDown);
         }
@@ -1444,7 +1445,6 @@ struct Gamemodes
         Bird.Animate();
         Pipes.MovePipes();
         Pipes.ResetPipesPosition();
-
         Score.IncScore();
 
         if (dashDo == 1)
