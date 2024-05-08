@@ -555,6 +555,19 @@ struct Collision
             currentGameState = GameState::GameOver;
         }
     }
+void CollisionMedium()
+{
+
+    if (diff == 1 && Bird.Bird.getPosition().y <= 0)
+    {
+        if (!Bird.Splayed)
+        {
+            Bird.Hit.play();
+            Bird.Splayed = 1;
+        }
+        currentGameState = GameState::GameOver;
+    }
+}
 }Collide;
 
 struct GameOverMenu
