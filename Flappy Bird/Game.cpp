@@ -750,8 +750,16 @@ struct Menu
 
     void set()
     {
-        birdtheme.loadFromFile("birdup3.png");
-        BirdForButton.setTexture(birdtheme);
+        //birdtheme.loadFromFile("birdmid3.png");
+        if(BirdTheme == 0)
+        BirdForButton.setTexture(Bird.TxOne[1]);
+
+        else if(BirdTheme == 1)
+            BirdForButton.setTexture(Bird.TxTwo[1]);
+
+        else
+            BirdForButton.setTexture(Bird.TxThree[1]);
+
         BirdForButton.setScale(1.7, 1.7);
         BirdForButton.setPosition(1150, 570);
 
@@ -986,7 +994,7 @@ struct credits
     Font font;
     Text text[7];
     Clock wingTimer;
-    short int currBird = 0, Colour = 10;
+    short int currBird = 0, Colour = 20;
     RectangleShape black;
     Sprite birds[7];
 
@@ -1007,7 +1015,13 @@ struct credits
         for (int i = 0; i < 7; i++)
         {
             birds[i] = Bird.Bird;
-            birds[i].setTexture(Bird.TxThree[0]);
+            if (BirdTheme == 0)
+                birds[i].setTexture(Bird.TxOne[0]);
+            else if (BirdTheme == 1)
+                birds[i].setTexture(Bird.TxTwo[0]);
+            else
+                birds[i].setTexture(Bird.TxThree[0]);
+
             birds[i].setOrigin(birds[0].getGlobalBounds().width / 2, text[i].getGlobalBounds().height / 2);
             birds[i].setScale(1.3, 1.3);
         }
@@ -1069,8 +1083,14 @@ struct credits
         {
             currBird = (currBird + 1) % 3;
             for (int i = 0; i < 7; i++)
-                birds[i].setTexture(Bird.TxThree[currBird]);
-
+            {
+                if (BirdTheme == 0)
+                    birds[i].setTexture(Bird.TxOne[currBird]);
+                else if (BirdTheme == 1)
+                    birds[i].setTexture(Bird.TxTwo[currBird]);
+                else
+                    birds[i].setTexture(Bird.TxThree[currBird]);
+            }
             wingTimer.restart();
         }
     }
@@ -1339,7 +1359,7 @@ struct dashStruct
         coinText.setFont(Score.ScoreFont);
         coinText.setScale(1.4, 1.4);
         coinText.setPosition(5, 0);
-        coinText.setFillColor(Color(240, 240, 0, 255));
+        coinText.setFillColor(Color(240, 240, 150, 255));
         coinText.setString("Coins: ");
         resetDash = 0, dashSound = 0, hasIncreased1 = 0, hasIncreased2 = 0, hasIncreased3 = 0, hasIncreased4 = 0, hasIncreased5 = 0, canUse = 0, coinIncreased = 0;
     }
@@ -1512,7 +1532,6 @@ int main()
     window.setFramerateLimit(60);
     setAssets();
     Birds.Constructor();
-
     while (window.isOpen())
     {
         while (window.pollEvent(event))
@@ -1561,6 +1580,7 @@ void draw()
     switch (currentGameState)
     {
     case MainMenu:
+        menu.set(); // to change bird colour in main menu on bird themes button as user changes bird theme
         menu.draw();
         break;
     case eTTP:
