@@ -272,7 +272,7 @@ struct Bird
 
 
         Bird.setPosition(PosX, PosY);
-        Bird.setOrigin(Bird.getGlobalBounds().width / 2, Bird.getGlobalBounds().height / 2);
+        Bird.setOrigin((Bird.getGlobalBounds().width / 2) - 2, Bird.getGlobalBounds().height / 2);
         Bird.setScale(Scale, Scale);
         Bird.setRotation(0);
 
@@ -490,9 +490,7 @@ struct Scoring
             Sinc++;
             Score.setString(to_string(Sinc));
             scoreCounterForAbility++;
-
         }
-
     }
 
     void ForGameOver()
@@ -862,12 +860,7 @@ struct Themes
         Textures[3].loadFromFile("London.jpg");
 
         themes.setTexture(Textures[0]);
-
-        if (ChooseTheme != 0)
-            themes.setPosition(0, -50);
-
-        else
-            themes.setPosition(0, 0);
+        themes.setPosition(0, 0);
     }
 
     void ChoosingThemeGUI()
@@ -994,7 +987,7 @@ struct credits
     Font font;
     Text text[7];
     Clock wingTimer;
-    short int currBird = 0, Colour = 20;
+    short int currBird = 0, Colour = 30;
     RectangleShape black;
     Sprite birds[7];
 
@@ -1007,7 +1000,7 @@ struct credits
         for (int i = 0; i < 7; i++)
         {
             text[i].setFont(font);
-            text[i].setFillColor(Color(50 + (Colour * i), 50 + (Colour * i), 200 - (Colour * i)));
+            text[i].setFillColor(Color(100 + (Colour * i), 10 + (Colour * i), 200 - (Colour * i)));
             text[i].setOrigin(text[i].getGlobalBounds().width / 2, text[i].getGlobalBounds().height / 2);
             text[i].setScale(1.5, 1.5);
         }
@@ -1192,11 +1185,26 @@ struct TapToPlayMenu
 {
     Texture Textures[2]; // Textures[0] = ttp, Textures[1] = get ready
     Sprite Stuff[2]; // Stuff[0] = ttp, Stuff[1] = get ready
+    Text medium, hard;
+    Font notes;
     void Constructor()
     {
         Textures[0].loadFromFile("ttplay.png");
         Stuff[0].setTexture(Textures[0]);
         Stuff[0].setPosition(815, 220);
+
+        notes.loadFromFile("JANDAMANATEESOLID.ttf");
+        medium.setFont(notes);
+        medium.setCharacterSize(50);
+        medium.setPosition((window.getSize().x / 2) - 120, window.getSize().y / 2);
+        medium.setString("Gravity Flip!");
+        medium.setFillColor(Color(160, 70, 140));
+
+        hard.setFont(notes);
+        hard.setCharacterSize(50);
+        hard.setPosition((window.getSize().x / 2) - 180, window.getSize().y / 2);
+        hard.setString("OMG THE PIPES!!");
+        hard.setFillColor(Color(160, 70, 140));
 
         Textures[1].loadFromFile("getready.png");
         Stuff[1].setTexture(Textures[1]);
@@ -1207,6 +1215,10 @@ struct TapToPlayMenu
     {
         window.draw(Stuff[0]);
         window.draw(Stuff[1]);
+        if (diff == 1)
+            window.draw(medium);
+        else if (diff == 2)
+            window.draw(hard);
         window.draw(menu.MainMenuS[5]);
         window.draw(menu.WhiteRectangles[2]);
         window.draw(menu.triangle);
