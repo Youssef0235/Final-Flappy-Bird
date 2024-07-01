@@ -520,11 +520,47 @@ struct Scoring
     }
 } Score;
 
+struct ShieldBubble
+{
+    Texture ShieldB;
+    Sprite Shield;
+    bool canLose;
+    void Constructor()
+    {
+        ShieldB.loadFromFile("Bubble_Shield1.png");
+        Shield.setTexture(ShieldB);
+        Shield.setPosition(800, 400);
+        Shield.setScale(2, 2);
+        canLose = 1;
+    }
+
+    void Conditions()
+    {
+        Shield.move(-2, 0);
+        if (Bird.Bird.getGlobalBounds().intersects(Shield.getGlobalBounds()))
+        {
+            Shield.setScale(0, 0);
+            canLose = 0;
+        }
+    }
+
+    void Draw()
+    {
+        window.draw(Shield);
+    }
+}shieldBubble;
+
 struct Collision
 {
+    Clock superPower;
+    bool restartclock;
+    void Constructor()
+    {
+        restartclock = 0;
+    }
     void CollisionWPipes(Sprite pipes[])
     {
-        if (Bird.Bird.getGlobalBounds().intersects(pipes[0].getGlobalBounds()) || Bird.Bird.getGlobalBounds().intersects(pipes[1].getGlobalBounds()) || Bird.Bird.getGlobalBounds().intersects(pipes[2].getGlobalBounds()) || Bird.Bird.getGlobalBounds().intersects(pipes[3].getGlobalBounds()) || Bird.Bird.getGlobalBounds().intersects(pipes[4].getGlobalBounds()))
+        if ((Bird.Bird.getGlobalBounds().intersects(pipes[0].getGlobalBounds()) || Bird.Bird.getGlobalBounds().intersects(pipes[1].getGlobalBounds()) || Bird.Bird.getGlobalBounds().intersects(pipes[2].getGlobalBounds()) || Bird.Bird.getGlobalBounds().intersects(pipes[3].getGlobalBounds()) || Bird.Bird.getGlobalBounds().intersects(pipes[4].getGlobalBounds())) && shieldBubble.canLose)
         {
             if (!Bird.Splayed)
             {
@@ -536,6 +572,18 @@ struct Collision
             Flash.FlashOn = 1;
             currentGameState = GameState::GameOver;
         }
+
+        else if ((Bird.Bird.getGlobalBounds().intersects(pipes[0].getGlobalBounds()) || Bird.Bird.getGlobalBounds().intersects(pipes[1].getGlobalBounds()) || Bird.Bird.getGlobalBounds().intersects(pipes[2].getGlobalBounds()) || Bird.Bird.getGlobalBounds().intersects(pipes[3].getGlobalBounds()) || Bird.Bird.getGlobalBounds().intersects(pipes[4].getGlobalBounds())) && !shieldBubble.canLose)
+        {
+            if (!restartclock)
+            {
+                superPower.restart();
+                restartclock = 1;
+            }
+            if ((int)superPower.getElapsedTime().asSeconds() == 1)
+                shieldBubble.canLose = 1;
+        }
+        cout << (int)superPower.getElapsedTime().asSeconds() << "\n";
     }
 
     void CollisionWGround()
@@ -1185,26 +1233,12 @@ struct TapToPlayMenu
 {
     Texture Textures[2]; // Textures[0] = ttp, Textures[1] = get ready
     Sprite Stuff[2]; // Stuff[0] = ttp, Stuff[1] = get ready
-    Text medium, hard;
-    Font notes;
+
     void Constructor()
     {
         Textures[0].loadFromFile("ttplay.png");
         Stuff[0].setTexture(Textures[0]);
         Stuff[0].setPosition(815, 220);
-
-        notes.loadFromFile("JANDAMANATEESOLID.ttf");
-        medium.setFont(notes);
-        medium.setCharacterSize(50);
-        medium.setPosition((window.getSize().x / 2) - 120, window.getSize().y / 2);
-        medium.setString("Gravity Flip!");
-        medium.setFillColor(Color(160, 70, 140));
-
-        hard.setFont(notes);
-        hard.setCharacterSize(50);
-        hard.setPosition((window.getSize().x / 2) - 180, window.getSize().y / 2);
-        hard.setString("OMG THE PIPES!!");
-        hard.setFillColor(Color(160, 70, 140));
 
         Textures[1].loadFromFile("getready.png");
         Stuff[1].setTexture(Textures[1]);
@@ -1215,10 +1249,6 @@ struct TapToPlayMenu
     {
         window.draw(Stuff[0]);
         window.draw(Stuff[1]);
-        if (diff == 1)
-            window.draw(medium);
-        else if (diff == 2)
-            window.draw(hard);
         window.draw(menu.MainMenuS[5]);
         window.draw(menu.WhiteRectangles[2]);
         window.draw(menu.triangle);
@@ -1440,6 +1470,7 @@ struct ForModeControl
             Bird.Constructor(1.5, 300, 250);
 
             Pipes.Constructor();
+            Collide.Constructor();
 
             Lone.Constructor(0, 700);
             Ltwo.Constructor(1700, 700);
@@ -1451,7 +1482,7 @@ struct ForModeControl
             Gover.Constuctor();
 
             Score.Constructor(800, 100, 50);
-
+            shieldBubble.Constructor();
             Flash.Constructor();
             scoreCounterForAbility = 0;
             dash.coins = 0;
@@ -1484,9 +1515,8 @@ struct Gamemodes
             Collide.CollisionWPipes(Pipes.PiUp);
             Collide.CollisionWPipes(Pipes.PiDown);
         }
-
         Bird.GUI();
-
+        shieldBubble.Conditions();
         Bird.Animate();
         Pipes.MovePipes();
         Pipes.ResetPipesPosition();
@@ -1558,7 +1588,7 @@ int main()
         }
         if (currentGameState == GameState::eGame)
             Difficulty.DifficultySettings();
-
+   
         Control.ControlSwitching();
         Control.Reset();
         dash.dashSpeed();
@@ -1600,6 +1630,7 @@ void draw()
         break;
     case eGame:
         Mode.Playing();
+        shieldBubble.Draw();
         break;
     case eDifficulty:
         level.draw();
