@@ -520,6 +520,7 @@ struct Scoring
     }
 } Score;
 
+// CHECK THIS FIRST
 struct ShieldBubble
 {
     Texture ShieldB;
@@ -550,6 +551,7 @@ struct ShieldBubble
     }
 }shieldBubble;
 
+// REST OF BUBBLE STUFF HERE WITH PIPES ONLY
 struct Collision
 {
     Clock superPower;
